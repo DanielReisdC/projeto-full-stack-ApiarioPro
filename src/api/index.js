@@ -1,20 +1,8 @@
-// Esse e o arquivo de navegação pelas rotas
+const express = require('express');
+const usuarioRoutes = require('./usuario');
 
-//Importação do express
-const express = require('express')
+const router = express.Router();
 
-//Criando um sistema de rotas para a URL /usuarios
-const usuariosRouter = require('./usuarios')
+router.use('/usuarios', usuarioRoutes);
 
-
-//Criando um sistema de navegação com o objeto router 
-const router = express.Router()
-//Resposta que o servidor está online
-router.get('/', (req, res)=>{
-    res.send('Online!')
-})
-
-router.use('/usuarios', usuariosRouter)
-
-// Exportando o router para ser utilizado em outros módulos
 module.exports = router;
