@@ -49,7 +49,9 @@ router.post('/login', async (req, res) => {
 
     res.json({
       message: 'Login bem-sucedido!',
-      token,  // Você pode retornar esse token para o cliente para usá-lo nas requisições subsequentes
+      token, 
+       
+ // Você pode retornar esse token para o cliente para usá-lo nas requisições subsequentes
     });
   } catch (error) {
     console.error(error);
