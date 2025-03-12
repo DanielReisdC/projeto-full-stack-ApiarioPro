@@ -58,6 +58,14 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Erro no servidor!' });
   }
 });
+router.post('/logout', (req, res) =>{
+  try{
+      res.clearCookie('token')
+      res.status(200).json("Logout concluído!")
+  }catch(erro){
+      res.status(500).json("Tente novamente")
+  }
+})
 
 
 module.exports = router;
