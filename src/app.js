@@ -1,14 +1,14 @@
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const usuariosRouter = require('./api/usuarios'); // Rota de usuários
+const usuarioRoutes = require('./api/usuarios'); // Aponte para a rota correta
+require('dotenv').config();
 
 app.use(cors());
-app.use(bodyParser.json());
-app.use('/usuarios', usuariosRouter); // A rota de usuários é acessível através de /usuarios
+app.use(express.json()); // Para garantir que o corpo da requisição será lido corretamente
+app.use('/usuarios', usuarioRoutes);
 
-app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });

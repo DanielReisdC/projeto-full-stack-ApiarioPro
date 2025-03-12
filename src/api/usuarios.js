@@ -3,6 +3,7 @@ const router = express.Router();
 const UsuarioService = require('../services/usuarios'); // Corrija o nome do arquivo caso necessário
 const Usuario = require('../models/usuarios');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Rota POST para cadastrar um usuário
 router.post('/cadastrar', async (req, res) => {
@@ -25,32 +26,35 @@ router.get('/', async (req, res) => {
   }
 });
 router.post('/login', async (req, res) => {
+  const { email, senha } = req.body;
+
   try {
-      const { email, senha } = req.body;
+    // Verificar se o usuário existe
+    const usuario = await Usuario.findOne({ where: { email } });
 
-      // Verifica se o usuário existe
-      const usuario = await Usuario.findOne({ where: { email } });
-      if (!usuario) {
-          return res.status(400).json({ erro: 'Usuário não encontrado!' });
-      }
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuário não encontrado!' });
+    }
 
-      // Compara a senha informada com a armazenada no banco
-      const senhaValida = bcrypt.compareSync(senha, usuario.senha);
-      if (!senhaValida) {
-          return res.status(400).json({ erro: 'Senha incorreta!' });
-      }
+    // Comparar a senha fornecida com a senha armazenada no banco
+    const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
 
-      // Retorna os dados do usuário (sem a senha)
-      return res.status(200).json({ 
-          id: usuario.id,
-          nome: usuario.nome,
-          email: usuario.email,
-      });
+    if (!senhaCorreta) {
+      return res.status(401).json({ message: 'Senha incorreta!' });
+    }
 
+    // Gerar um token de autenticação (JWT)
+    const token = jwt.sign({ id: usuario.id, email: usuario.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.json({
+      message: 'Login bem-sucedido!',
+      token,  // Você pode retornar esse token para o cliente para usá-lo nas requisições subsequentes
+    });
   } catch (error) {
-      console.error(error);
-      return res.status(500).json({ erro: 'Erro ao fazer login!' });
+    console.error(error);
+    res.status(500).json({ message: 'Erro no servidor!' });
   }
 });
+
 
 module.exports = router;
