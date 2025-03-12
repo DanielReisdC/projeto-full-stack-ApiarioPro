@@ -4,7 +4,7 @@ const UsuarioService = require('../services/usuarios'); // Corrija o nome do arq
 const Usuario = require('../models/usuarios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config();
 // Rota POST para cadastrar um usuário
 router.post('/cadastrar', async (req, res) => {
     try {
