@@ -4,6 +4,7 @@ const UsuarioService = require('../services/usuarios'); // Corrija o nome do arq
 const Usuario = require('../models/usuarios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const verificarToken = require('../middleware/autenticacao');
 require('dotenv').config();
 // Rota POST para cadastrar um usuário
 router.post('/cadastrar', async (req, res) => {
@@ -16,7 +17,7 @@ router.post('/cadastrar', async (req, res) => {
 });
 
 // Rota GET para listar todos os usuários
-router.get('/', async (req, res) => {
+router.get('/', verificarToken, async (req, res) => {
   try {
     const usuarios = await Usuario.findAll(); // Consulta todos os usuários no banco
     return res.status(200).json(usuarios); // Retorna a lista de usuários
