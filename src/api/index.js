@@ -1,7 +1,9 @@
 const express = require('express');
 const usuarioRoutes = require('./usuario');
-const colmeiaRoutes = require("./colmeias");
+const colmeiaRoutes = require('./colmeia');
 
-router.use("/usuarios", usuarioRoutes);
-router.use("/colmeias", colmeiaRoutes);
+const router = express.Router();
+
+router.use('/usuarios', usuarioRoutes);
+router.use('/colmeias', colmeiaRoutes);
 module.exports = router;
