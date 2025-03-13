@@ -1,5 +1,6 @@
 const sequelize = require('../config/database');
 const Usuario = require('./usuarios');
+const Colmeia= require('./colmeias');
 
 const sincronizarModelos = async () => {
     try {
@@ -11,3 +12,4 @@ const sincronizarModelos = async () => {
 };
 
 module.exports = { sequelize, Usuario, sincronizarModelos };
+module.exports = { sequelize, Colmeia, sincronizarModelos };

@@ -7,14 +7,7 @@ const jwt = require('jsonwebtoken');
 const verificarToken = require('../middleware/autenticacao');
 require('dotenv').config();
 // Rota POST para cadastrar um usuário
-router.post('/cadastrar', async (req, res) => {
-    try {
-        const usuario = await UsuarioService.cadastrarUsuario(req.body);
-        res.status(201).json(usuario);
-    } catch (error) {
-        res.status(400).json({ erro: error.message });
-    }
-});
+
 
 // Rota GET para listar todos os usuários
 router.get('/', verificarToken, async (req, res) => {
@@ -24,6 +17,14 @@ router.get('/', verificarToken, async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ erro: 'Erro ao buscar os usuários' });
+  }
+});
+router.post('/cadastrar', async (req, res) => {
+  try {
+      const usuario = await UsuarioService.cadastrarUsuario(req.body);
+      res.status(201).json(usuario);
+  } catch (error) {
+      res.status(400).json({ erro: error.message });
   }
 });
 router.post('/login', async (req, res) => {
@@ -46,12 +47,14 @@ router.post('/login', async (req, res) => {
 
     // Gerar um token de autenticação (JWT)
     const token = jwt.sign({ id: usuario.id, email: usuario.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({
-      message: 'Login bem-sucedido!',
-      token, 
-       
- // Você pode retornar esse token para o cliente para usá-lo nas requisições subsequentes
+    return res.json({
+      message: "Login bem-sucedido!",
+      token,
+      usuario: {
+        id: usuario.id,
+        nome: usuario.nome,  // ✅ Incluído na resposta
+        email: usuario.email,
+      }
     });
   } catch (error) {
     console.error(error);
