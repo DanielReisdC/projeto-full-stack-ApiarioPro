@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-module.exports = (sequelize, DataTypes) => {
+
     const Colmeia = sequelize.define('Colmeia', {
       tipo_colmeia: {
         type: DataTypes.STRING,
@@ -17,6 +17,5 @@ module.exports = (sequelize, DataTypes) => {
       },
     });
   
-    return Colmeia;
-  };
-  
+    
+  module.exports = Colmeia;
