@@ -1,6 +1,6 @@
 const express = require('express');
 const usuarioRoutes = require('./usuario');
-const colmeiaRoutes = require('./colmeia');
+const colmeiaRoutes = require('./colmeias');
 
 const router = express.Router();
 

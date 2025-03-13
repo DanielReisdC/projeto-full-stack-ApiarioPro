@@ -1,4 +1,4 @@
-const Colmeia = require("../models/Colmeia");
+const Colmeia = require("../models/colmeia");
 
 const cadastrarColmeia = async (tipo, quantidade, estado) => {
   return await Colmeia.create({ tipo, quantidade, estado });

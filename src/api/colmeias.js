@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const ColmeiaService = require("../services/ColmeiaService");
+const ColmeiaService = require("../services/colmeias");
 
 // Rota para cadastrar uma colmeia
 router.post("/cadastrar", async (req, res) => {
