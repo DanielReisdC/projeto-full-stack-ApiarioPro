@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const ColmeiaService = require("../services/colmeias");
+require('dotenv').config();
 
 // Rota para cadastrar uma colmeia
 router.post("/cadastrar", async (req, res) => {

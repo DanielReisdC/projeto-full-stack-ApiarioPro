@@ -15,5 +15,19 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   },
   logging: false  // Desativa logs desnecessários
 });
+const sincronizarBanco = async () => {
+  try {
+    await sequelize.sync({ alter: true }); // 🔄 Isso recria a tabela se necessário
+    console.log("Banco de dados sincronizado!");
+  } catch (erro) {
+    console.error("Erro ao sincronizar o banco:", erro);
+  }
+};
+
+sincronizarBanco();
+
 
 module.exports = sequelize;
+
+
+
