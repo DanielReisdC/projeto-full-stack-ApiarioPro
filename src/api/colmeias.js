@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const { cadastrarColmeia, listarColmeias } = require("../services/colmeias");
-
+const verificarToken = require("../middleware/autenticacao");
 // Rota para cadastrar uma colmeia associada ao usuário
-router.post("/cadastrar", async (req, res) => {
+router.post("/cadastrar", verificarToken, async (req, res) => {
   try {
-    const { tipo, quantidade, estado, usuarioId } = req.body;
+    const { tipo, quantidade, estado } = req.body;
+    const usuarioId = req.user.id;  // Pegando o `usuarioId` do token
 
     if (!tipo || !quantidade || !estado || !usuarioId) {
       return res.status(400).json({ mensagem: "Preencha todos os campos." });
@@ -19,14 +20,16 @@ router.post("/cadastrar", async (req, res) => {
 });
 
 // Rota para listar colmeias de um usuário específico
-router.get("/:usuarioId", async (req, res) => {
+// Rota para listar colmeias de um usuário específico
+router.get("/listar", verificarToken, async (req, res) => {
   try {
-    const { usuarioId } = req.params;
+    const usuarioId = req.user.id; // Acessando o usuário decodificado do token
     const colmeias = await listarColmeias(usuarioId);
     res.status(200).json(colmeias);
   } catch (erro) {
     res.status(500).json({ mensagem: "Erro ao buscar colmeias", erro });
   }
 });
+
 
 module.exports = router;
