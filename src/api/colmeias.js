@@ -18,7 +18,17 @@ router.post("/cadastrar", verificarToken, async (req, res) => {
     res.status(500).json({ mensagem: "Erro ao cadastrar colmeia", erro });
   }
 });
-
+router.get("/:usuarioId", async (req, res) => {
+  try {
+   
+    const { usuarioId } = req.params;
+    const colmeias = await listarColmeias(usuarioId);
+    res.status(200).json(colmeias);
+  } catch (erro) {
+    res.status(500).json({ mensagem: "Erro ao buscar colmeias", erro: erro.message });
+    res.status(500).json({ mensagem: "Erro ao buscar colmeias", erro });
+  }
+});
 // Rota para listar colmeias de um usuário específico
 // Rota para listar colmeias de um usuário específico
 router.get("/listar", verificarToken, async (req, res) => {
