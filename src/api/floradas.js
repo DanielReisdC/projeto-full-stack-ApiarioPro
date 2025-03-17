@@ -4,7 +4,6 @@ const router = express.Router();
 const { cadastrarFlorada, listarFloradas } = require('../services/floradas');
 const verificarToken = require('../middleware/autenticacao');
 const jwt = require('jsonwebtoken');
-const { excluirFlorada } = require('../services/floradas');
 const { Florada } = require('../models'); 
 router.post('/cadastrar', async (req, res) => {
     try {
@@ -39,20 +38,24 @@ router.get('/',verificarToken, async (req, res) => {
 });
 // api/floradas.js
 // Rota para excluir florada
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verificarToken, async (req, res) => {
   try {
+      const token = req.headers.authorization.split(' ')[1]; // Obtém o token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const usuarioId = decoded.id; // ID do usuário autenticado
+
       const { id } = req.params;
       console.log(`Tentando excluir a florada com ID: ${id}`);
-
-      if (!id) {
-          console.log("Erro: ID da florada não foi fornecido.");
-          return res.status(400).json({ error: "ID da florada não fornecido." });
-      }
 
       const florada = await Florada.findByPk(id);
       if (!florada) {
           console.log(`Erro: Florada com ID ${id} não encontrada.`);
           return res.status(404).json({ error: "Florada não encontrada." });
+      }
+
+      // Verifica se a florada pertence ao usuário autenticado
+      if (florada.usuarioId !== usuarioId) {
+          return res.status(403).json({ error: "Você não tem permissão para excluir esta florada." });
       }
 
       await florada.destroy();
@@ -64,6 +67,7 @@ router.delete('/:id', async (req, res) => {
       res.status(500).json({ error: "Erro interno ao excluir florada." });
   }
 });
+
 
 
 module.exports = router;
