@@ -32,5 +32,20 @@ async function listarFloradas(usuarioId) {
   const floradas = await Florada.findAll({ where: { usuarioId } });
   return floradas;
 }
-
-module.exports = { cadastrarFlorada, listarFloradas };
+async function excluirFlorada(id) {
+    try {
+      const florada = await Florada.findByPk(id);
+      if (!florada) {
+        console.log(`Florada com id ${id} não encontrada.`);
+        return null; // Florada não encontrada
+      }
+  
+      await florada.destroy(); // Exclui a florada do banco
+      return true; // Excluída com sucesso
+    } catch (erro) {
+      console.error("Erro ao excluir florada:", erro);
+      throw erro; // Lança o erro para ser tratado na rota
+    }
+  }
+  
+module.exports = { cadastrarFlorada, listarFloradas, excluirFlorada };
