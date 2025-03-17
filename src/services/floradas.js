@@ -1,5 +1,5 @@
 // services/floradas.js
-const Florada = require('../models/floradas');
+const {Florada} = require('../models');
 
 // Função para cadastrar uma florada
 async function cadastrarFlorada(nome, data_inicio, data_fim, usuarioId) {
@@ -33,19 +33,19 @@ async function listarFloradas(usuarioId) {
   return floradas;
 }
 async function excluirFlorada(id) {
-    try {
-      const florada = await Florada.findByPk(id);
-      if (!florada) {
-        console.log(`Florada com id ${id} não encontrada.`);
-        return null; // Florada não encontrada
-      }
-  
-      await florada.destroy(); // Exclui a florada do banco
-      return true; // Excluída com sucesso
-    } catch (erro) {
-      console.error("Erro ao excluir florada:", erro);
-      throw erro; // Lança o erro para ser tratado na rota
+  try {
+    const florada = await Florada.findByPk(id);
+    if (!florada) {
+      console.log(`Florada com id ${id} não encontrada.`);
+      return null; // Florada não encontrada
     }
+
+    await florada.destroy(); // Exclui a florada do banco
+    return true; // Excluída com sucesso
+  } catch (erro) {
+    console.error("Erro ao excluir florada:", erro);
+    throw erro; // Lança o erro para ser tratado na rota
   }
+}
   
 module.exports = { cadastrarFlorada, listarFloradas, excluirFlorada };

@@ -5,7 +5,7 @@ const { cadastrarFlorada, listarFloradas } = require('../services/floradas');
 const verificarToken = require('../middleware/autenticacao');
 const jwt = require('jsonwebtoken');
 const { excluirFlorada } = require('../services/floradas');
-// Rota para cadastrar uma florada
+const { Florada } = require('../models'); 
 router.post('/cadastrar', async (req, res) => {
     try {
       const { nome, data_inicio, data_fim, usuarioId } = req.body;
@@ -39,30 +39,31 @@ router.get('/',verificarToken, async (req, res) => {
 });
 // api/floradas.js
 // Rota para excluir florada
-router.delete('/:id', verificarToken, async (req, res) => {
-    try {
+router.delete('/:id', async (req, res) => {
+  try {
       const { id } = req.params;
-      const token = req.headers.authorization.split(' ')[1]; // Pega o token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodifica o token
-      const usuarioId = decoded.id;
-  
-      // Verificar se a florada pertence ao usuário
+      console.log(`Tentando excluir a florada com ID: ${id}`);
+
+      if (!id) {
+          console.log("Erro: ID da florada não foi fornecido.");
+          return res.status(400).json({ error: "ID da florada não fornecido." });
+      }
+
       const florada = await Florada.findByPk(id);
-      if (!florada || florada.usuarioId !== usuarioId) {
-        return res.status(403).json({ mensagem: "Você não tem permissão para excluir esta florada." });
+      if (!florada) {
+          console.log(`Erro: Florada com ID ${id} não encontrada.`);
+          return res.status(404).json({ error: "Florada não encontrada." });
       }
-  
-      const resultado = await excluirFlorada(id);
-      if (resultado) {
-        res.status(200).json({ mensagem: "Florada excluída com sucesso!" });
-      } else {
-        res.status(404).json({ mensagem: "Florada não encontrada" });
-      }
-    } catch (erro) {
-      console.error("Erro ao excluir a florada:", erro);
-      res.status(500).json({ mensagem: "Erro ao excluir a florada", erro: erro.message });
-    }
-  });
-  
-  
+
+      await florada.destroy();
+      console.log(`Florada com ID ${id} excluída com sucesso.`);
+      res.json({ message: "Florada excluída com sucesso!" });
+
+  } catch (error) {
+      console.error("Erro ao excluir florada:", error);
+      res.status(500).json({ error: "Erro interno ao excluir florada." });
+  }
+});
+
+
 module.exports = router;
