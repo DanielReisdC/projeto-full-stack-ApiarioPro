@@ -2,29 +2,48 @@
  const Colmeia = require('../models/colmeias');
 
  // Função para cadastrar uma colmeia
- async function cadastrarColmeia(tipo, quantidade, estado, usuarioId) {
-   // Verificando se a colmeia já existe para o mesmo tipo e estado
-   const colmeiaExistente = await Colmeia.findOne({
-     where: { tipo, estado, usuarioId }
-   });
- 
-   if (colmeiaExistente) {
-     // Se existir, atualiza a quantidade
-     colmeiaExistente.quantidade += quantidade;
-     await colmeiaExistente.save();
-     return colmeiaExistente;
-   } else {
-     // Se não existir, cria uma nova
-     const novaColmeia = await Colmeia.create({
-       tipo,
-       quantidade,
-       estado,
-       usuarioId
-     });
-     return novaColmeia;
-   }
- }
- 
+ const cadastrarColmeia = async (usuarioId, tipo_colmeia, quantidade, estado) => {
+  try {
+      // Verifica se já existe uma colmeia do mesmo tipo e estado para o usuário
+      const colmeiaExistente = await Colmeia.findOne({
+          where: { usuarioId, tipo_colmeia, estado }
+      });
+
+      if (colmeiaExistente) {
+          // Se já existe, atualiza a quantidade
+          await colmeiaExistente.update({ quantidade });
+      } else {
+          // Se não existe, cria um novo registro
+          await Colmeia.create({ usuarioId, tipo_colmeia, quantidade, estado });
+      }
+
+      return { success: true, message: "Colmeia cadastrada/atualizada com sucesso" };
+  } catch (error) {
+      console.error("Erro ao cadastrar colmeia:", error);
+      throw new Error("Erro ao cadastrar colmeia");
+  }
+};
+const cadastrarOuAtualizarColmeia = async (usuarioId, tipo_colmeia, quantidade, estado) => {
+  try {
+    // Verifica se já existe uma colmeia com o mesmo tipo, estado e usuarioId
+    const colmeiaExistente = await Colmeia.findOne({
+      where: { usuarioId, tipo_colmeia, estado }
+    });
+
+    if (colmeiaExistente) {
+      // Se a colmeia existir, atualiza a quantidade com o valor enviado
+      await colmeiaExistente.update({ quantidade });
+    } else {
+      // Se a colmeia não existir, cria uma nova com a quantidade fornecida
+      await Colmeia.create({ usuarioId, tipo_colmeia, quantidade, estado });
+    }
+
+    return { success: true, message: "Colmeia cadastrada/atualizada com sucesso" };
+  } catch (error) {
+    console.error("Erro ao cadastrar ou atualizar colmeia:", error);
+    return { success: false, message: "Erro ao processar colmeia", error };
+  }
+};
  // Função para listar as colmeias de um usuário específico, agrupadas por estado e tipo
  async function listarColmeias(usuarioId) {
   const colmeias = await Colmeia.findAll({
@@ -67,4 +86,4 @@
 }
 
  
- module.exports = { cadastrarColmeia, listarColmeias };
+ module.exports = { cadastrarColmeia, listarColmeias, cadastrarOuAtualizarColmeia  };
