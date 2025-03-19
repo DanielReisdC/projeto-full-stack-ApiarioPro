@@ -1,32 +1,29 @@
- // services/colmeias.js
- const Colmeia = require('../models/colmeias');
+// services/colmeias.js
+const Colmeia = require('../models/colmeias');
 
- // Função para cadastrar uma colmeia
- async function cadastrarColmeia(tipo, quantidade, estado, usuarioId) {
-   // Verificando se a colmeia já existe para o mesmo tipo e estado
-   const colmeiaExistente = await Colmeia.findOne({
-     where: { tipo, estado, usuarioId }
-   });
- 
-   if (colmeiaExistente) {
-     // Se existir, atualiza a quantidade
-     colmeiaExistente.quantidade += quantidade;
-     await colmeiaExistente.save();
-     return colmeiaExistente;
-   } else {
-     // Se não existir, cria uma nova
-     const novaColmeia = await Colmeia.create({
-       tipo,
-       quantidade,
-       estado,
-       usuarioId
-     });
-     return novaColmeia;
-   }
- }
- 
- // Função para listar as colmeias de um usuário específico, agrupadas por estado e tipo
- async function listarColmeias(usuarioId) {
+// Função para cadastrar uma colmeia
+async function cadastrarColmeia(tipo, quantidade, estado, usuarioId) {
+  const colmeiaExistente = await Colmeia.findOne({
+    where: { tipo, estado, usuarioId }
+  });
+
+  if (colmeiaExistente) {
+    // Em vez de substituir, agora soma a nova quantidade
+    colmeiaExistente.quantidade += quantidade;
+    await colmeiaExistente.save();
+    return colmeiaExistente;
+  } else {
+    const novaColmeia = await Colmeia.create({
+      tipo,
+      quantidade,
+      estado,
+      usuarioId
+    });
+    return novaColmeia;
+  }
+}
+// Função para listar as colmeias de um usuário específico, agrupadas por estado e tipo
+async function listarColmeias(usuarioId) {
   const colmeias = await Colmeia.findAll({
     where: { usuarioId }
   });
@@ -65,6 +62,18 @@
   // Retorna as colmeias agrupadas
   return colmeiasPorEstado;
 }
+async function atualizarColmeia(tipoColmeia, quantidade) {
+  const colmeia = await Colmeia.findOne({ where: { tipo: tipoColmeia } });
 
- 
- module.exports = { cadastrarColmeia, listarColmeias };
+  if (!colmeia) {
+    throw new Error('Colmeia não encontrada');
+  }
+
+  colmeia.quantidade = quantidade;
+  await colmeia.save();
+  
+  return colmeia;
+}
+
+
+module.exports = { cadastrarColmeia, listarColmeias, atualizarColmeia };

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { cadastrarColmeia, listarColmeias } = require("../services/colmeias");
+const { atualizarColmeia } = require('../services/colmeias');
 
 // Rota para cadastrar uma colmeia associada ao usuário
 router.post("/cadastrar", async (req, res) => {
@@ -10,7 +11,7 @@ router.post("/cadastrar", async (req, res) => {
     if (!tipo || !quantidade || !estado || !usuarioId) {
       return res.status(400).json({ mensagem: "Preencha todos os campos." });
     }
-
+    
     const novaColmeia = await cadastrarColmeia(tipo, quantidade, estado, usuarioId);
     res.status(201).json(novaColmeia);
   } catch (erro) {
@@ -19,6 +20,21 @@ router.post("/cadastrar", async (req, res) => {
 });
 
 // Rota para listar colmeias de um usuário específico
+router.put('/atualizar', async (req, res) => {
+  try {
+    const { tipoColmeia } = req.params;
+    const { quantidade } = req.body;
+
+    if (quantidade == null) {
+      return res.status(400).json({ mensagem: 'Quantidade é obrigatória' });
+    }
+
+    const colmeiaAtualizada = await atualizarColmeia(tipoColmeia, quantidade);
+    res.status(200).json(colmeiaAtualizada);
+  } catch (erro) {
+    res.status(500).json({ mensagem: 'Erro ao atualizar a colmeia', erro: erro.message });
+  }
+});
 router.get("/:usuarioId", async (req, res) => {
   try {
     const { usuarioId } = req.params;
