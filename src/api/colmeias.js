@@ -22,8 +22,7 @@ router.post("/cadastrar", async (req, res) => {
 // Rota para listar colmeias de um usuário específico
 router.put('/atualizar', async (req, res) => {
   try {
-    const { tipoColmeia } = req.params;
-    const { quantidade } = req.body;
+    const { tipoColmeia, quantidade } = req.body; // Agora o tipoColmeia vem do corpo da requisição
 
     if (quantidade == null) {
       return res.status(400).json({ mensagem: 'Quantidade é obrigatória' });
