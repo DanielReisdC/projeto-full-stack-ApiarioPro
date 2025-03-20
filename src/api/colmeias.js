@@ -29,7 +29,7 @@ router.get("/:usuarioId", async (req, res) => {
     res.status(500).json({ mensagem: "Erro ao buscar colmeias", erro });
   }
 });
-router.put("/atualizar/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;  // O id da colmeia
     const { quantidade } = req.body;  // A nova quantidade
