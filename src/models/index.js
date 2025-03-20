@@ -2,6 +2,7 @@ const sequelize = require("../config/database");
 const Usuario = require("./usuarios");
 const Colmeia = require("./colmeias");
 const Florada = require("./floradas"); // <-- Adicione essa linha!
+const Apiario = require("./apiarios");
 
 const sincronizarModelos = async () => {
   try {
@@ -13,4 +14,4 @@ const sincronizarModelos = async () => {
 };
 
 // Exportando todos os modelos corretamente
-module.exports = { sequelize, Usuario, Colmeia, Florada, sincronizarModelos }; // <-- Adicione "Florada" aqui!
+module.exports = { sequelize, Usuario, Colmeia, Florada, Apiario, sincronizarModelos }; // <-- Adicione "Florada" aqui!

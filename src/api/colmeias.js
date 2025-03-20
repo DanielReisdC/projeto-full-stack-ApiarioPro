@@ -29,21 +29,25 @@ router.get("/:usuarioId", async (req, res) => {
     res.status(500).json({ mensagem: "Erro ao buscar colmeias", erro });
   }
 });
-router.put("/atualizar/:id", async (req, res) => {
+router.put("/atualizar", async (req, res) => {
   try {
-    const { id } = req.params;  // O id da colmeia
-    const { quantidade } = req.body;  // A nova quantidade
+    const { usuarioId, tipo, estado, quantidade } = req.body;
 
-    if (quantidade === undefined || quantidade < 0) {
-      return res.status(400).json({ mensagem: "Quantidade inválida." });
+    if (!usuarioId || !tipo|| !estado || quantidade === undefined || quantidade < 0) {
+      return res.status(400).json({ mensagem: "Dados inválidos para atualização." });
     }
 
-    const colmeiaAtualizada = await atualizarColmeia(id, quantidade);
+    const colmeiaAtualizada = await atualizarColmeia(usuarioId, tipo, estado, quantidade);
+
+    if (!colmeiaAtualizada) {
+      return res.status(404).json({ mensagem: "Colmeia não encontrada." });
+    }
 
     res.status(200).json(colmeiaAtualizada);
   } catch (erro) {
     res.status(500).json({ mensagem: "Erro ao atualizar colmeia", erro });
   }
 });
+
 
 module.exports = router;

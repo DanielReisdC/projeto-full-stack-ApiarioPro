@@ -63,18 +63,27 @@ async function listarColmeias(usuarioId) {
   // Retorna as colmeias agrupadas
   return colmeiasPorEstado;
 }
-async function atualizarColmeia(id, quantidade) {
-  const colmeia = await Colmeia.findByPk(id);  // Encontra a colmeia pelo ID
+async function atualizarColmeia(usuarioId, tipo, estado, quantidade) {
+  try {
+    const colmeia = await Colmeia.findOne({ where: { usuarioId, tipo,estado } });
+    
+    if (!colmeia) {
+      return null;  // Retorna null se a colmeia não for encontrada
+    }
 
-  if (!colmeia) {
-    throw new Error("Colmeia não encontrada");
+    // Atualiza os dados da colmeia
+    colmeia.estado = estado;
+    colmeia.quantidade = quantidade;
+
+    await colmeia.save();
+    return colmeia;  // Retorna a colmeia atualizada
+  } catch (erro) {
+    console.error('Erro na atualização da colmeia:', erro);
+    throw erro;
   }
-
-  colmeia.quantidade = quantidade;  // Atualiza a quantidade
-  await colmeia.save();  // Salva a alteração no banco de dados
-
-  return colmeia;
 }
+
+
 
 
 module.exports = { cadastrarColmeia, listarColmeias, atualizarColmeia};

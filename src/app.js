@@ -4,6 +4,7 @@ const cors = require('cors');
 const usuarioRoutes = require('./api/usuarios'); // Rotas de usuários
 const colmeiaRoutes = require('./api/colmeias'); // Rotas de colmeias
 const floradaRoutes = require('./api/floradas');
+const apiarioRoutes = require('./api/apiarios');
 
 require('dotenv').config();
 
@@ -13,6 +14,7 @@ app.use(express.json()); // Para garantir que o corpo da requisição será lido
 app.use('/usuarios', usuarioRoutes);
 app.use('/colmeias', colmeiaRoutes); // Agora o backend reconhece as rotas de colmeias
 app.use("/floradas", floradaRoutes);
+app.use("/apiarios", apiarioRoutes);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
