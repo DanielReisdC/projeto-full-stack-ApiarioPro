@@ -1,7 +1,12 @@
 const { Apiario } = require("../models");
 
-async function cadastrarApiario(regiao, florada, colmeias, imagem, usuarioId) {
+async function cadastrarApiario({ regiao, florada, colmeias, imagem, usuarioId }) {
   try {
+    // Verifique se os campos obrigatórios estão preenchidos
+    if (!regiao || !florada || !colmeias || !usuarioId) {
+      throw new Error("Todos os campos obrigatórios devem ser preenchidos.");
+    }
+
     const novoApiario = await Apiario.create({ regiao, florada, colmeias, imagem, usuarioId });
     return novoApiario;
   } catch (error) {

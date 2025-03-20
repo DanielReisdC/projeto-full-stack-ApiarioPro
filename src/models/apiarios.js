@@ -5,19 +5,19 @@ const Usuario = require("./usuarios"); // Importando o model de Usuário
 const Apiario = sequelize.define("Apiario", {
   regiao: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   florada: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   colmeias: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: false
   },
   imagem: {
     type: DataTypes.TEXT, // Armazena a imagem em Base64
-    allowNull: true,
+    allowNull: true
   },
   usuarioId: {
     type: DataTypes.INTEGER,

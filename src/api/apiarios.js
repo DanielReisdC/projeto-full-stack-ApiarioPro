@@ -10,36 +10,20 @@ router.post('/cadastrar', verificarToken, async (req, res) => {
     try {
         const { regiao, florada, colmeias, imagem } = req.body;
         
-        // Validação dos campos
-        if (!regiao || typeof regiao !== 'string') {
-            return res.status(400).json({ mensagem: "A região deve ser uma string válida." });
+        if (!regiao || !florada || !colmeias) {
+            return res.status(400).json({ mensagem: "Preencha todos os campos obrigatórios." });
         }
 
-        if (!florada || typeof florada !== 'string') {
-            return res.status(400).json({ mensagem: "A florada deve ser uma string válida." });
-        }
-
-        if (!colmeias || typeof colmeias !== 'number') {
-            return res.status(400).json({ mensagem: "O número de colmeias deve ser um número válido." });
-        }
-
-        // Decodificação do token e obtenção do usuário
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const usuarioId = decoded.id;
 
-        if (!usuarioId) {
-            return res.status(400).json({ mensagem: "Usuário não autenticado." });
-        }
-
-        // Criar o novo apiário
         const novoApiario = await cadastrarApiario({ regiao, florada, colmeias, imagem, usuarioId });
         res.status(201).json(novoApiario);
     } catch (erro) {
         res.status(500).json({ mensagem: "Erro ao cadastrar apiário", erro: erro.message });
     }
 });
-
 
 // Rota para listar os apiários de um usuário
 router.get('/', verificarToken, async (req, res) => {
