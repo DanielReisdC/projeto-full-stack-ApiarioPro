@@ -1,18 +1,19 @@
-// services/colmeias.js
 const Colmeia = require('../models/colmeias');
 
-// Função para cadastrar uma colmeia
+// Função para cadastrar ou atualizar uma colmeia
 async function cadastrarColmeia(tipo, quantidade, estado, usuarioId) {
+  // Verificando se já existe uma colmeia com o mesmo tipo, estado e usuário
   const colmeiaExistente = await Colmeia.findOne({
     where: { tipo, estado, usuarioId }
   });
 
   if (colmeiaExistente) {
-    // Em vez de substituir, agora soma a nova quantidade
-    colmeiaExistente.quantidade += quantidade;
-    await colmeiaExistente.save();
+    // Se existir, soma a quantidade da colmeia existente com a nova quantidade
+    colmeiaExistente.quantidade += quantidade; // Soma a quantidade
+    await colmeiaExistente.save();  // Salva as alterações no banco
     return colmeiaExistente;
   } else {
+    // Se não existir, cria uma nova colmeia
     const novaColmeia = await Colmeia.create({
       tipo,
       quantidade,
@@ -22,6 +23,7 @@ async function cadastrarColmeia(tipo, quantidade, estado, usuarioId) {
     return novaColmeia;
   }
 }
+
 // Função para listar as colmeias de um usuário específico, agrupadas por estado e tipo
 async function listarColmeias(usuarioId) {
   const colmeias = await Colmeia.findAll({
@@ -44,12 +46,11 @@ async function listarColmeias(usuarioId) {
 
   // Itera sobre as colmeias e agrupa as quantidades por estado e tipo
   colmeias.forEach(colmeia => {
-    // Acesse os dados corretamente (em caso de Sequelize retornar instâncias)
     const colmeiaData = colmeia.dataValues;
 
-    // Garantir que tipo e estado estejam consistentes (forçando maiúsculas e minúsculas)
-    const estado = colmeiaData.estado.toLowerCase();  // Normalizando estado para minúsculo
-    const tipo = colmeiaData.tipo.toUpperCase();      // Normalizando tipo para maiúsculo
+    // Normalizando o estado para minúsculo e o tipo para maiúsculo
+    const estado = colmeiaData.estado.toLowerCase();
+    const tipo = colmeiaData.tipo.toUpperCase();
 
     // Agrupar as colmeias por tipo e estado
     if (estado === 'em_campo') {
@@ -62,18 +63,18 @@ async function listarColmeias(usuarioId) {
   // Retorna as colmeias agrupadas
   return colmeiasPorEstado;
 }
-async function atualizarColmeia(tipoColmeia, quantidade) {
-  const colmeia = await Colmeia.findOne({ where: { tipo: tipoColmeia } });
+async function atualizarColmeia(id, quantidade) {
+  const colmeia = await Colmeia.findByPk(id);  // Encontra a colmeia pelo ID
 
   if (!colmeia) {
-    throw new Error('Colmeia não encontrada');
+    throw new Error("Colmeia não encontrada");
   }
 
-  colmeia.quantidade = quantidade;
-  await colmeia.save();
-  
+  colmeia.quantidade = quantidade;  // Atualiza a quantidade
+  await colmeia.save();  // Salva a alteração no banco de dados
+
   return colmeia;
 }
 
 
-module.exports = { cadastrarColmeia, listarColmeias, atualizarColmeia };
+module.exports = { cadastrarColmeia, listarColmeias, atualizarColmeia};
