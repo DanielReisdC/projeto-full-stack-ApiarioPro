@@ -3,7 +3,7 @@ const router = express.Router();
 const { cadastrarApiario, listarApiarios } = require('../services/apiarios');
 const verificarToken = require('../middleware/autenticacao');
 const jwt = require('jsonwebtoken');
-const { Apiario, Florada } = require('../models');  // Importando também o model Florada
+const { Apiario } = require('../models');  // Importando também o model Florada
 
 // Rota para cadastrar um apiário
 router.post('/cadastrar', verificarToken, async (req, res) => {
