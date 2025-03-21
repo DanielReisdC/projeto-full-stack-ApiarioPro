@@ -1,4 +1,4 @@
-const { Apiario,Florada} = require("../models");
+const { Apiario} = require("../models");
 
 async function cadastrarApiario({ regiao, florada, colmeias, imagem, usuarioId }) {
   try {
@@ -8,16 +8,11 @@ async function cadastrarApiario({ regiao, florada, colmeias, imagem, usuarioId }
     }
 
     // Buscar o nome da florada pelo ID
-    const floradaEncontrada = await Florada.findByPk(florada);
-    if (!floradaEncontrada) {
-      throw new Error("Florada não encontrada.");
-    }
-
-    // Criar o novo apiário com o nome da florada
+   
     const novoApiario = await Apiario.create({ 
       regiao, 
       florada, 
-      nomeFlorada: floradaEncontrada.nome, // Armazenar nome da florada
+     
       colmeias, 
       imagem, 
       usuarioId 
@@ -30,22 +25,8 @@ async function cadastrarApiario({ regiao, florada, colmeias, imagem, usuarioId }
 }
 async function listarApiarios(usuarioId) {
   try {
-    // Buscar os apiários do usuário e incluir o nome da florada
-    const apiarios = await Apiario.findAll({
-      where: { usuarioId },  // Garantir que estamos buscando apenas os apiários do usuário
-      include: {
-        model: Florada,
-        attributes: ['nome'], // Incluir o campo 'nome' da florada
-      },
-    });
-
-    // Modificar o resultado para incluir o nome da florada diretamente
-    return apiarios.map(apiario => {
-      return {
-        ...apiario.dataValues,
-        florada: apiario.Florada ? apiario.Florada.nome : apiario.florada,  // Se Florada não for encontrado, retornar o valor original
-      };
-    });
+    return await Apiario.findAll({ where: { usuarioId } });
+   
   } catch (error) {
     throw new Error("Erro ao listar apiários: " + error.message);
   }
