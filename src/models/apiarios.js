@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 const Usuario = require("./usuarios"); // Importando o model de Usuário
-
+const Florada = require("./floradas"); 
 const Apiario = sequelize.define("Apiario", {
   regiao: {
     type: DataTypes.STRING,
@@ -32,5 +32,5 @@ const Apiario = sequelize.define("Apiario", {
 
 // Definindo a relação: Um usuário pode ter vários apiários
 Apiario.belongsTo(Usuario, { foreignKey: "usuarioId" });
-
+Apiario.belongsTo(Florada, { foreignKey: "floradaId" }); 
 module.exports = Apiario;
