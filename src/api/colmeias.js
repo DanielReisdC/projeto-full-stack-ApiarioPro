@@ -38,6 +38,7 @@ router.put("/atualizar/:usuarioId", async (req, res) => {
       return res.status(400).json({ mensagem: "Dados inválidos para atualização." });
     }
 
+    // Chama a função para atualizar a colmeia
     const colmeiaAtualizada = await atualizarColmeia(usuarioId, tipo, estado, quantidade);
 
     if (!colmeiaAtualizada) {
@@ -49,6 +50,8 @@ router.put("/atualizar/:usuarioId", async (req, res) => {
     res.status(500).json({ mensagem: "Erro ao atualizar colmeia", erro });
   }
 });
+
+
 
 
 module.exports = router;

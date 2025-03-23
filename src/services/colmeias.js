@@ -8,7 +8,7 @@ async function cadastrarColmeia(tipo, quantidade, estado, usuarioId) {
   });
 
   if (colmeiaExistente) {
-    // Se existir, soma a quantidade da colmeia existente com a nova quantidade
+    // Se existir, atualiza a quantidade da colmeia existente
     colmeiaExistente.quantidade += quantidade; // Soma a quantidade
     await colmeiaExistente.save();  // Salva as alterações no banco
     return colmeiaExistente;
@@ -63,21 +63,44 @@ async function listarColmeias(usuarioId) {
   // Retorna as colmeias agrupadas
   return colmeiasPorEstado;
 }
+
+// Função para atualizar a quantidade de uma colmeia específica
 async function atualizarColmeia(usuarioId, tipo, estado, quantidade) {
-  const colmeia = await Colmeia.findOne({ where: { usuarioId, tipo } });
-  
-  if (!colmeia) {
-    return null;  // Se a colmeia não for encontrada, retorna null
+  // Verifica se já existe uma colmeia com o mesmo tipo e estado
+  const colmeiaExistente = await Colmeia.findOne({
+    where: { usuarioId, tipo, estado }
+  });
+
+  if (!colmeiaExistente) {
+    // Se a colmeia não for encontrada, tentamos verificar a colmeia no outro estado
+    // Exemplo: se estamos alterando de 'vazia' para 'em_campo', procuramos a 'vazia'
+    const colmeiaAlternativa = await Colmeia.findOne({
+      where: { usuarioId, tipo, estado: estado === 'em_campo' ? 'vazia' : 'em_campo' }
+    });
+
+    if (colmeiaAlternativa) {
+      // Atualiza o estado da colmeia para o novo estado e altera a quantidade
+      colmeiaAlternativa.estado = estado;
+      colmeiaAlternativa.quantidade = quantidade;
+      await colmeiaAlternativa.save();
+      return colmeiaAlternativa;
+    }
+
+    // Se não encontrar a colmeia nem no estado atual nem no estado alternativo, retorna null
+    return null;
   }
 
-  colmeia.estado = estado;
-  colmeia.quantidade = quantidade;
-  await colmeia.save();
-
-  return colmeia;  // Retorna a colmeia atualizada
+  // Se encontrar a colmeia no estado atual, só atualizamos a quantidade
+  colmeiaExistente.quantidade = quantidade;
+  await colmeiaExistente.save();
+  return colmeiaExistente;
 }
 
 
 
 
-module.exports = { cadastrarColmeia, listarColmeias, atualizarColmeia};
+
+
+
+
+module.exports = { cadastrarColmeia, listarColmeias, atualizarColmeia };
