@@ -64,23 +64,17 @@ async function listarColmeias(usuarioId) {
   return colmeiasPorEstado;
 }
 async function atualizarColmeia(usuarioId, tipo, estado, quantidade) {
-  try {
-    const colmeia = await Colmeia.findOne({ where: { usuarioId, tipo,estado } });
-    
-    if (!colmeia) {
-      return null;  // Retorna null se a colmeia não for encontrada
-    }
-
-    // Atualiza os dados da colmeia
-    colmeia.estado = estado;
-    colmeia.quantidade = quantidade;
-
-    await colmeia.save();
-    return colmeia;  // Retorna a colmeia atualizada
-  } catch (erro) {
-    console.error('Erro na atualização da colmeia:', erro);
-    throw erro;
+  const colmeia = await Colmeia.findOne({ where: { usuarioId, tipo } });
+  
+  if (!colmeia) {
+    return null;  // Se a colmeia não for encontrada, retorna null
   }
+
+  colmeia.estado = estado;
+  colmeia.quantidade = quantidade;
+  await colmeia.save();
+
+  return colmeia;  // Retorna a colmeia atualizada
 }
 
 
