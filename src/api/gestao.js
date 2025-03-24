@@ -4,6 +4,7 @@ const router = express.Router();
 const { cadastrarProducao, listarProducoes, excluirProducao } = require('../services/gestao');
 const verificarToken = require('../middleware/autenticacao');
 const jwt = require('jsonwebtoken');
+const { Gestao } = require('../models');
 
 // Rota para cadastrar uma produção de mel
 router.post('/cadastrar', verificarToken, async (req, res) => {
@@ -49,7 +50,7 @@ router.delete('/:ano', verificarToken, async (req, res) => {
 
   try {
     // Encontre a produção mais recente do usuário para o ano selecionado
-    const producaoRecente = await Producoes.findOne({
+    const producaoRecente = await Gestao.findOne({
       where: {
         usuarioId,
         ano,
