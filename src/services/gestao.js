@@ -3,32 +3,34 @@ const { Gestao } = require('../models'); // Corrigido para o modelo Gestao
 
 // Função para cadastrar uma produção de mel
 async function cadastrarProducao(quantidade_florada, florada, quantidade_mes, mes, ano, usuarioId) {
-  // Verificar se já existe uma produção registrada para o mesmo mês e ano para o usuário
-  const producaoExistente = await Gestao.findOne({
-    where: {
-      usuarioId,
-      mes,
-      ano
+    // Verificar se já existe uma produção registrada para o mesmo mês, ano e florada para o usuário
+    const producaoExistente = await Gestao.findOne({
+      where: {
+        usuarioId,
+        mes,
+        ano,
+        florada // Verifica se já existe uma produção para a mesma florada no mês e ano
+      }
+    });
+  
+    if (producaoExistente) {
+      // Se já existir, você pode retornar uma mensagem dizendo que já existe uma produção para essa florada
+      throw new Error(`Já existe uma produção cadastrada para a florada '${florada}' no mês ${mes} e ano ${ano}.`);
     }
-  });
-
-  if (producaoExistente) {
-    // Se já existir, você pode optar por atualizar ou retornar um erro
-    throw new Error('Já existe uma produção cadastrada para esse mês e ano.');
+  
+    // Caso não exista, cria uma nova produção
+    const novaProducao = await Gestao.create({
+      quantidade_florada,
+      florada,
+      quantidade_mes,
+      mes,
+      ano,
+      usuarioId
+    });
+  
+    return novaProducao;
   }
-
-  // Caso não exista, cria uma nova produção
-  const novaProducao = await Gestao.create({
-    quantidade_florada,
-    florada,
-    quantidade_mes,
-    mes,
-    ano,
-    usuarioId
-  });
-
-  return novaProducao;
-}
+  
 
 // Função para listar todas as produções de um usuário
 async function listarProducoes(usuarioId, ano) {
