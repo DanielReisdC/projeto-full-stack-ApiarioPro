@@ -40,7 +40,6 @@ router.get('/:ano', verificarToken, async (req, res) => {
   }
 });
 
-// Rota para excluir uma produção
 router.delete('/:ano', verificarToken, async (req, res) => {
   const token = req.headers.authorization.split(' ')[1]; // Obtém o token
   const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodifica o token
@@ -49,15 +48,26 @@ router.delete('/:ano', verificarToken, async (req, res) => {
   const { ano } = req.params; // Agora estamos usando o 'ano' na URL
 
   try {
-    // Chama o serviço de exclusão passando o ID do usuário e o ano
-    const resultado = await excluirProducao(usuarioId, ano); // Não precisa mais do 'id' da produção
-    if (resultado) {
-      res.status(200).json({ mensagem: "Produção excluída com sucesso!" });
+    // Encontre a produção mais recente do usuário para o ano selecionado
+    const producaoRecente = await Producoes.findOne({
+      where: {
+        usuarioId,
+        ano,
+      },
+      order: [['createdAt', 'DESC']], // Ordena pela data de criação (de mais recente)
+    });
+
+    if (producaoRecente) {
+      await producaoRecente.destroy(); // Exclui o registro mais recente
+      return res.status(200).json({ mensagem: "Produção excluída com sucesso!" });
+    } else {
+      return res.status(404).json({ mensagem: "Nenhuma produção encontrada para este ano." });
     }
   } catch (erro) {
     res.status(500).json({ mensagem: erro.message });
   }
 });
+
 
 
 module.exports = router;
