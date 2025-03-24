@@ -23,5 +23,26 @@ router.get('/:ano', async (req, res) => {
         res.status(500).json({ error: 'Erro ao buscar produções' });
     }
 });
+// No arquivo de rotas da 'gestao.js' no backend
+
+// Rota para deletar os dados de produção por ano
+router.delete('/deletar/:ano', async (req, res) => {
+    const { ano } = req.params;
+  
+    try {
+      // Deletar os registros do ano selecionado
+      await Gestao.destroy({
+        where: {
+          ano: ano,
+        },
+      });
+  
+      res.status(200).json({ message: "Dados de produção apagados com sucesso!" });
+    } catch (error) {
+      console.error("Erro ao deletar dados:", error);
+      res.status(500).json({ error: "Erro ao deletar dados de produção." });
+    }
+  });
+  
 
 module.exports = router;
