@@ -26,13 +26,14 @@ router.post('/cadastrar', verificarToken, async (req, res) => {
 });
 
 // Rota para listar as produções de um usuário
-router.get('/', verificarToken, async (req, res) => {
+router.get('/:ano', verificarToken, async (req, res) => {
+  const { ano } = req.params;  // Pega o ano da URL
   try {
     const token = req.headers.authorization.split(' ')[1]; // Obtém o token
     const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodifica o token
     const usuarioId = decoded.id;
 
-    const producoes = await listarProducoes(usuarioId);
+    const producoes = await listarProducoes(usuarioId, ano);  // Passa o ano para a função de listagem
     res.status(200).json(producoes);
   } catch (erro) {
     res.status(500).json({ mensagem: "Erro ao buscar produções", erro });

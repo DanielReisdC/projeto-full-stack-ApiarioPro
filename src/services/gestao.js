@@ -31,17 +31,21 @@ async function cadastrarProducao(quantidade_florada, florada, quantidade_mes, me
 }
 
 // Função para listar todas as produções de um usuário
-async function listarProducoes(usuarioId) {
-  try {
-    const producoes = await Gestao.findAll({
-      where: { usuarioId }
-    });
-    return producoes;
-  } catch (erro) {
-    console.error('Erro ao buscar produções:', erro); // Logando o erro no servidor
-    throw new Error('Erro ao buscar produções');
+async function listarProducoes(usuarioId, ano) {
+    try {
+      const producoes = await Gestao.findAll({
+        where: { 
+          usuarioId,
+          ano // Filtra também pelo ano
+        }
+      });
+      return producoes;
+    } catch (erro) {
+      console.error('Erro ao buscar produções:', erro); // Logando o erro no servidor
+      throw new Error('Erro ao buscar produções');
+    }
   }
-}
+  
 
 // Função para excluir uma produção
 async function excluirProducao(usuarioId, ano) {
