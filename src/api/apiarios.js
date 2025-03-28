@@ -69,5 +69,23 @@ router.delete('/:id', verificarToken, async (req, res) => {
         res.status(500).json({ error: "Erro interno ao excluir apiário." });
     }
 });
+router.put("/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { regiao, florada, nomeFlorada, colmeias, imagem } = req.body;
+  
+      const apiario = await Apiario.findByPk(id);
+      if (!apiario) {
+        return res.status(404).json({ error: "Apiário não encontrado" });
+      }
+  
+      await apiario.update({ regiao, florada, nomeFlorada, colmeias, imagem });
+  
+      res.json(apiario);
+    } catch (error) {
+      console.error("Erro ao atualizar apiário:", error);
+      res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  });
 
 module.exports = router;
