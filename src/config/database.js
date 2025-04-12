@@ -11,14 +11,10 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
     ssl: {
       require: true,  // Exige conexão SSL
       rejectUnauthorized: false  // Ignora a verificação de certificado SSL
-    },
-    // Força uso de IPv4
-    native: true,
-    family: 4 // Força conexão usando IPv4
+    }
   },
   logging: false  // Desativa logs desnecessários
 });
-
 const sincronizarBanco = async () => {
   try {
     await sequelize.sync({ alter: true }); // 🔄 Isso recria a tabela se necessário
@@ -30,4 +26,8 @@ const sincronizarBanco = async () => {
 
 sincronizarBanco();
 
+
 module.exports = sequelize;
+
+
+
